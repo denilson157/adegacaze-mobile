@@ -3,6 +3,8 @@ package com.example.adegacaze
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.adegacaze.databinding.ActivityMainBinding
+import com.example.adegacaze.view.ProductBuyFragment
+import com.example.adegacaze.view.ProductListFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,7 +35,8 @@ class MainActivity : AppCompatActivity() {
                         .commit()
                 }
                 else -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.container, fragPadrao)
+                    val fragProduct = ProductListFragment.newInstance();
+                    supportFragmentManager.beginTransaction().replace(R.id.container, fragProduct)
                         .commit()
                 }
             }

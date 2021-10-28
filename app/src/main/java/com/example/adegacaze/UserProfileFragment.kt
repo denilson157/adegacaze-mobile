@@ -13,13 +13,25 @@ class UserProfileFragment : Fragment() {
     lateinit var binding: FragmentUserProfileBinding;
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentUserProfileBinding.inflate(inflater, container, false)
+        abrirMenuEndereco()
         return binding.root
+    }
+
+    private fun abrirMenuEndereco() {
+        binding.cardEndereco.setOnClickListener {
+
+
+            val addressFrag = ListAddressFragment.newInstance();
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, addressFrag)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     companion object {

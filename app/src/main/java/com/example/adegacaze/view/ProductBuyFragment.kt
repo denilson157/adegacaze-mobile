@@ -1,5 +1,6 @@
 package com.example.adegacaze.view
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,9 +14,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import com.example.adegacaze.databinding.FragmentProductBuyBinding
 import com.example.adegacaze.databinding.FragmentSearchBarBinding
-import com.example.adegacaze.service.IProductService
-import com.example.adegacaze.service.getService
 import com.example.adegacaze.model.Product
+import com.example.adegacaze.service.API
 import com.google.android.material.snackbar.Snackbar
 
 private const val ARG_ID = "id"
@@ -23,6 +23,7 @@ private const val ARG_ID = "id"
 class ProductBuyFragment : Fragment() {
     lateinit var binding: FragmentProductBuyBinding;
     private var productId: Int? = null;
+    lateinit var ctx: Context;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,15 +40,13 @@ class ProductBuyFragment : Fragment() {
 
         binding = FragmentProductBuyBinding.inflate(inflater, container, false)
         carregarProduto()
+        if (container != null)
+            ctx = container.context;
         return binding.root
     }
 
     private fun carregarProduto() {
         if (productId != null) {
-            val service = getService().create(IProductService::class.java)
-
-            val call = service.pesquisarPorId(productId!!)
-
             val callback = object : Callback<Product> {
 
                 override fun onResponse(call: Call<Product>, response: Response<Product>) {
@@ -77,9 +76,7 @@ class ProductBuyFragment : Fragment() {
                 }
             }
 
-
-            call.enqueue(callback)
-
+            API(ctx).produto.pesquisarPorId(productId!!).enqueue(callback)
         }
 
     }

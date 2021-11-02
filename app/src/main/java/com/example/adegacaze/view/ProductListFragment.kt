@@ -1,5 +1,6 @@
 package com.example.adegacaze.view
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +13,8 @@ import com.example.adegacaze.UserRegisterFragment
 import com.example.adegacaze.databinding.FragmentProductListBinding
 import com.example.adegacaze.databinding.FragmentProductBinding
 import com.example.adegacaze.model.Product
+import com.example.adegacaze.service.API
 import com.example.adegacaze.service.IProductService
-import com.example.adegacaze.service.getService
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -22,12 +23,17 @@ import retrofit2.Response
 
 class ProductListFragment : Fragment() {
     lateinit var binding: FragmentProductListBinding;
+    lateinit var ctx: Context;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentProductListBinding.inflate(inflater, container, false)
+        swipeRefresh()
+
+        if (container != null)
+            ctx = container.context;
 
         return binding.root
     }
@@ -37,12 +43,16 @@ class ProductListFragment : Fragment() {
         listarProdutos()
     }
 
+    private fun swipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            listarProdutos()
+        }
+    }
+
 
     private fun listarProdutos() {
-        val service = getService().create(IProductService::class.java)
 
-        val call = service.listar()
-
+        mostrarShimmer(true)
         val callback = object : Callback<List<Product>> {
             override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
                 if (response.isSuccessful) {
@@ -58,7 +68,7 @@ class ProductListFragment : Fragment() {
 
                     Log.e("Erro", error);
                 }
-
+                mostrarShimmer(false)
             }
 
             override fun onFailure(call: Call<List<Product>>, t: Throwable) {
@@ -69,10 +79,11 @@ class ProductListFragment : Fragment() {
                 ).show();
 
                 Log.e("Erro", "Falha ao executar serviço", t);
+                mostrarShimmer(false)
             }
         }
 
-        call.enqueue(callback)
+        API(ctx).produto.listar().enqueue(callback)
 
     }
 
@@ -107,6 +118,19 @@ class ProductListFragment : Fragment() {
                 .replace(R.id.container, signUpFrag)
                 .addToBackStack(null)
                 .commit()
+        }
+    }
+
+    private fun mostrarShimmer(mostrar: Boolean) {
+        if (mostrar) {
+            binding.shimmer.visibility = View.VISIBLE;
+            binding.shimmer.startShimmer();
+            binding.containerProdutos.visibility = View.INVISIBLE;
+        } else {
+            binding.shimmer.visibility = View.INVISIBLE;
+            binding.shimmer.stopShimmer();
+            binding.containerProdutos.visibility = View.VISIBLE;
+            binding.swipeRefresh.isRefreshing = false;
         }
     }
 

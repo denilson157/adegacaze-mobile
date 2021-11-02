@@ -1,20 +1,16 @@
 package com.example.adegacaze
 
-import android.net.Uri
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.adegacaze.databinding.FragmentAddressBinding
 import com.example.adegacaze.databinding.FragmentAdressUserBinding
 import com.example.adegacaze.model.Address
-import com.example.adegacaze.model.Product
-import com.example.adegacaze.service.IAddressService
-import com.example.adegacaze.service.getService
+import com.example.adegacaze.service.API
 import com.google.android.material.snackbar.Snackbar
-import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +20,7 @@ private const val ARG_ID = "id"
 class AdressUserFragment : Fragment() {
     lateinit var binding: FragmentAdressUserBinding;
     private var addressId: Int? = null;
+    lateinit var ctx: Context;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +28,8 @@ class AdressUserFragment : Fragment() {
     ): View? {
         binding = FragmentAdressUserBinding.inflate(inflater, container, false)
         carregarEndereco()
+        if (container != null)
+            ctx = container.context;
         return binding.root
 
     }
@@ -57,9 +56,6 @@ class AdressUserFragment : Fragment() {
 
     private fun carregarEndereco() {
         if (addressId != null) {
-            val service = getService().create(IAddressService::class.java)
-
-            val call = service.pesquisarPorId(addressId!!)
 
             val callback = object : Callback<Address> {
                 override fun onResponse(call: Call<Address>, response: Response<Address>) {
@@ -91,7 +87,7 @@ class AdressUserFragment : Fragment() {
             }
 
 
-            call.enqueue(callback)
+            API(ctx).endereco.pesquisarPorId(addressId!!).enqueue(callback)
 
         }
 

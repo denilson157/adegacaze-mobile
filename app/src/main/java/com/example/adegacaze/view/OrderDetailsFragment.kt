@@ -1,22 +1,17 @@
 package com.example.adegacaze.view
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.adegacaze.R
-import com.example.adegacaze.databinding.FragmentAddressBinding
-import com.example.adegacaze.databinding.FragmentOrderBinding
 import com.example.adegacaze.databinding.FragmentOrderDetailsBinding
 import com.example.adegacaze.databinding.FragmentOrderProductBinding
-import com.example.adegacaze.model.Address
 import com.example.adegacaze.model.Order
 import com.example.adegacaze.model.ProductsItem
-import com.example.adegacaze.service.IAddressService
-import com.example.adegacaze.service.IOrderService
-import com.example.adegacaze.service.getService
+import com.example.adegacaze.service.API
 import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,6 +23,7 @@ class OrderDetailsFragment : Fragment() {
 
     lateinit var binding: FragmentOrderDetailsBinding;
     private var orderId: Int? = null;
+    lateinit var ctx: Context;
 
 
     override fun onCreateView(
@@ -36,6 +32,8 @@ class OrderDetailsFragment : Fragment() {
     ): View? {
 
         binding = FragmentOrderDetailsBinding.inflate(inflater, container, false)
+        if (container != null)
+            ctx = container.context;
         carregarOrder()
         return binding.root
 
@@ -63,9 +61,7 @@ class OrderDetailsFragment : Fragment() {
 
     private fun carregarOrder() {
         if (orderId != null) {
-            val service = getService().create(IOrderService::class.java)
 
-            val call = service.pesquisarPorId(orderId!!)
 
             val callback = object : Callback<Order> {
                 override fun onResponse(call: Call<Order>, response: Response<Order>) {
@@ -96,8 +92,7 @@ class OrderDetailsFragment : Fragment() {
 
             }
 
-
-            call.enqueue(callback)
+            API(ctx).pedido.pesquisarPorId(orderId!!).enqueue(callback)
 
         }
 
@@ -120,7 +115,8 @@ class OrderDetailsFragment : Fragment() {
                 produtoPedidoBinding.textPrecoProduto.text = it.pivot.price.toString();
 
                 produtoPedidoBinding.textQuantidadeProduto.text = it.pivot.quantity.toString();
-                produtoPedidoBinding.textPrecoTotal.text = (it.pivot.quantity * it.pivot.price).toString();
+                produtoPedidoBinding.textPrecoTotal.text =
+                    (it.pivot.quantity * it.pivot.price).toString();
 
                 binding.frameItensPedido.addView(produtoPedidoBinding.root)
 

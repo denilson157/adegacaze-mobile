@@ -1,6 +1,6 @@
 package com.example.adegacaze
 
-import android.net.Uri
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,16 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.adegacaze.databinding.FragmentAddressBinding
 import com.example.adegacaze.databinding.FragmentListAddressBinding
-import com.example.adegacaze.databinding.FragmentLoginBinding
-import com.example.adegacaze.databinding.FragmentProductBinding
 import com.example.adegacaze.model.Address
-import com.example.adegacaze.model.Product
-import com.example.adegacaze.service.IAddressService
-import com.example.adegacaze.service.IProductService
-import com.example.adegacaze.service.getService
-import com.example.adegacaze.view.ProductBuyFragment
+import com.example.adegacaze.service.API
 import com.google.android.material.snackbar.Snackbar
-import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,6 +19,7 @@ import retrofit2.Response
 
 class ListAddressFragment : Fragment() {
     lateinit var binding: FragmentListAddressBinding;
+    lateinit var ctx: Context;
 
 
     override fun onCreateView(
@@ -33,7 +27,8 @@ class ListAddressFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentListAddressBinding.inflate(inflater, container, false)
-
+        if (container != null)
+            ctx = container.context;
         return binding.root
     }
 
@@ -44,12 +39,9 @@ class ListAddressFragment : Fragment() {
 
 
     private fun listarEnderecos() {
-        val service = getService().create(IAddressService::class.java)
-
-        val call = service.listar()
-
         val callback = object : Callback<List<Address>> {
             override fun onResponse(call: Call<List<Address>>, response: Response<List<Address>>) {
+                controlarProgessBar(false)
                 if (response.isSuccessful) {
                     atualizarUIEnderecos(response.body())
                 } else {
@@ -60,7 +52,6 @@ class ListAddressFragment : Fragment() {
                         "Não foi possível carregar os enderecos",
                         Snackbar.LENGTH_LONG
                     ).show();
-
                     Log.e("Erro", error);
                 }
 
@@ -72,13 +63,22 @@ class ListAddressFragment : Fragment() {
                     "Não foi possível se conectar com o servidor",
                     Snackbar.LENGTH_LONG
                 ).show();
-
+                controlarProgessBar(false)
                 Log.e("Erro", "Falha ao executar serviço", t);
             }
         }
 
-        call.enqueue(callback)
 
+        API(ctx).endereco.listar().enqueue(callback)
+
+        controlarProgessBar(true)
+    }
+
+    private fun controlarProgessBar(mostrar: Boolean) {
+        if (mostrar)
+            binding.progressBar.visibility = View.VISIBLE;
+        else
+            binding.progressBar.visibility = View.GONE;
     }
 
     private fun atualizarUIEnderecos(enderecos: List<Address>?) {

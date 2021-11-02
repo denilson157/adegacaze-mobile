@@ -1,24 +1,18 @@
 package com.example.adegacaze.view
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.adegacaze.AdressUserFragment
 import com.example.adegacaze.R
-import com.example.adegacaze.databinding.FragmentAddressBinding
-import com.example.adegacaze.databinding.FragmentListAddressBinding
 import com.example.adegacaze.databinding.FragmentOrderBinding
 import com.example.adegacaze.databinding.FragmentOrdersBinding
-import com.example.adegacaze.model.Address
 import com.example.adegacaze.model.Order
-import com.example.adegacaze.model.Product
 import com.example.adegacaze.model.ProductsItem
-import com.example.adegacaze.service.IAddressService
-import com.example.adegacaze.service.IOrderService
-import com.example.adegacaze.service.getService
+import com.example.adegacaze.service.API
 import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,12 +20,16 @@ import retrofit2.Response
 
 class OrdersFragment : Fragment() {
     lateinit var binding: FragmentOrdersBinding;
+    lateinit var ctx: Context;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentOrdersBinding.inflate(inflater, container, false)
+
+        if (container != null)
+            ctx = container.context;
 
         return binding.root
     }
@@ -46,10 +44,6 @@ class OrdersFragment : Fragment() {
     }
 
     private fun listarPedidos() {
-        val service = getService().create(IOrderService::class.java)
-
-        val call = service.listar()
-
         val callback = object : Callback<List<Order>> {
             override fun onResponse(call: Call<List<Order>>, response: Response<List<Order>>) {
                 if (response.isSuccessful) {
@@ -79,7 +73,8 @@ class OrdersFragment : Fragment() {
 
         }
 
-        call.enqueue(callback)
+
+        API(ctx).pedido.listar().enqueue(callback)
 
     }
 

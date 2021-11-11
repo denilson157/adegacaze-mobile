@@ -23,7 +23,7 @@ private const val ARG_ID = "id"
 class ProductBuyFragment : Fragment() {
     lateinit var binding: FragmentProductBuyBinding;
     private var productId: Int? = null;
-    lateinit var ctx: Context;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +40,7 @@ class ProductBuyFragment : Fragment() {
 
         binding = FragmentProductBuyBinding.inflate(inflater, container, false)
         carregarProduto()
-        if (container != null)
-            ctx = container.context;
+
         return binding.root
     }
 
@@ -76,7 +75,7 @@ class ProductBuyFragment : Fragment() {
                 }
             }
 
-            API(ctx).produto.pesquisarPorId(productId!!).enqueue(callback)
+            API(requireContext()).produto.pesquisarPorId(productId!!).enqueue(callback)
         }
 
     }

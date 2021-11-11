@@ -1,6 +1,6 @@
 package com.example.adegacaze
 
-import android.content.Context
+
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,13 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.adegacaze.databinding.FragmentUserProfileBinding
-import com.example.adegacaze.databinding.FragmentUserRegisterBinding
 
 
 class UserProfileFragment : Fragment() {
     lateinit var binding: FragmentUserProfileBinding;
-    lateinit var ctx: Context;
-
 
 
     override fun onCreateView(
@@ -23,17 +20,16 @@ class UserProfileFragment : Fragment() {
     ): View? {
         binding = FragmentUserProfileBinding.inflate(inflater, container, false)
         abrirMenuEndereco()
+        abrirEdicaoUsuario()
         sair()
 
-        if (container != null)
-            ctx = container.context;
 
         return binding.root
     }
 
     private fun sair() {
         binding.buttonSair.setOnClickListener {
-            removeUserPreferences(ctx);
+            removeUserPreferences(requireContext());
 
             val intent = Intent(activity, MainActivity::class.java);
 
@@ -47,6 +43,19 @@ class UserProfileFragment : Fragment() {
 
 
             val addressFrag = ListAddressFragment.newInstance();
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, addressFrag)
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    private fun abrirEdicaoUsuario() {
+        binding.cardPerfil.setOnClickListener {
+
+            val userId = getUserId(requireContext());
+
+            val addressFrag = UserRegisterFragment.newInstance(userId);
             parentFragmentManager.beginTransaction()
                 .replace(R.id.container, addressFrag)
                 .addToBackStack(null)

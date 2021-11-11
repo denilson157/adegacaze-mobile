@@ -13,6 +13,7 @@ import com.example.adegacaze.UserRegisterFragment
 import com.example.adegacaze.databinding.FragmentProductListBinding
 import com.example.adegacaze.databinding.FragmentProductBinding
 import com.example.adegacaze.model.Product
+import com.example.adegacaze.model.ProductSearch
 import com.example.adegacaze.service.API
 import com.example.adegacaze.service.IProductService
 import com.google.android.material.snackbar.Snackbar
@@ -21,36 +22,45 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+private const val ARG_ID = "categoryId"
+private const val ARG_NAME = "categoryName"
+private const val ARG_PRODUCT_NAME = "productName"
+
+
 class ProductListFragment : Fragment() {
     lateinit var binding: FragmentProductListBinding;
-    lateinit var ctx: Context;
+    private var categoryId: Int? = null;
+    private var categoryName: String? = null;
+    private var productName: String? = null;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentProductListBinding.inflate(inflater, container, false)
-        swipeRefresh()
 
-        if (container != null)
-            ctx = container.context;
 
         return binding.root
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            categoryId = it.getInt(com.example.adegacaze.view.ARG_ID)
+            categoryName = it.getString(com.example.adegacaze.view.ARG_NAME)
+            productName = it.getString(com.example.adegacaze.view.ARG_PRODUCT_NAME)
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
         listarProdutos()
     }
 
-    private fun swipeRefresh() {
-        binding.swipeRefresh.setOnRefreshListener {
-            listarProdutos()
-        }
-    }
-
 
     private fun listarProdutos() {
+        binding.textProductName.text = categoryName;
 
         mostrarShimmer(true)
         val callback = object : Callback<List<Product>> {
@@ -83,7 +93,12 @@ class ProductListFragment : Fragment() {
             }
         }
 
-        API(ctx).produto.listar().enqueue(callback)
+        if (categoryId != null && productName != null) {
+            val objetoPesquisa = ProductSearch(categoryId!!, productName!!);
+            API(requireContext()).produto.pesquisarProdutoNomePorCategoria(objetoPesquisa)
+                .enqueue(callback)
+        } else if (categoryId != null)
+            API(requireContext()).produto.pesquisarPorCategoria(categoryId!!).enqueue(callback)
 
     }
 
@@ -91,6 +106,10 @@ class ProductListFragment : Fragment() {
 
 
         if (produtos != null) {
+
+            if (produtos.count() == 0)
+                binding.containerProduto.visibility = View.GONE;
+
             binding.containerProdutos.removeAllViews()
 
             produtos.forEach {
@@ -108,7 +127,8 @@ class ProductListFragment : Fragment() {
                 binding.containerProdutos.addView(productBinding.root)
 
             }
-        }
+        } else
+            binding.containerProduto.visibility = View.GONE;
     }
 
     private fun abrirProduto(productBinding: FragmentProductBinding, produtoId: Int) {
@@ -130,12 +150,26 @@ class ProductListFragment : Fragment() {
             binding.shimmer.visibility = View.INVISIBLE;
             binding.shimmer.stopShimmer();
             binding.containerProdutos.visibility = View.VISIBLE;
-            binding.swipeRefresh.isRefreshing = false;
         }
     }
 
     companion object {
         @JvmStatic
-        fun newInstance() = ProductListFragment()
+        fun newInstance(id: Int?, name: String?, productName: String?) = ProductListFragment()
+            .apply {
+                arguments = Bundle().apply {
+                    if (id != null)
+                        putInt(com.example.adegacaze.view.ARG_ID, id);
+
+
+                    if (name != null)
+                        putString(com.example.adegacaze.view.ARG_NAME, name);
+
+
+                    if (productName != null)
+                        putString(com.example.adegacaze.view.ARG_PRODUCT_NAME, productName);
+
+                }
+            }
     }
 }

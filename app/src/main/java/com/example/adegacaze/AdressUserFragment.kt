@@ -1,15 +1,17 @@
 package com.example.adegacaze
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doOnTextChanged
 import com.example.adegacaze.databinding.FragmentAdressUserBinding
 import com.example.adegacaze.model.Address
+import com.example.adegacaze.model.RespAddress
 import com.example.adegacaze.service.API
+import com.example.adegacaze.view.HomeFragment
 import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,7 +22,6 @@ private const val ARG_ID = "id"
 class AdressUserFragment : Fragment() {
     lateinit var binding: FragmentAdressUserBinding;
     private var addressId: Int? = null;
-    lateinit var ctx: Context;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,8 +29,9 @@ class AdressUserFragment : Fragment() {
     ): View? {
         binding = FragmentAdressUserBinding.inflate(inflater, container, false)
         carregarEndereco()
-        if (container != null)
-            ctx = container.context;
+        validarEnderecoParaSalvar()
+        removerErros()
+
         return binding.root
 
     }
@@ -47,7 +49,7 @@ class AdressUserFragment : Fragment() {
         fun newInstance(id: Int?) = AdressUserFragment()
             .apply {
                 arguments = Bundle().apply {
-                    if(id != null)
+                    if (id != null)
                         putInt(com.example.adegacaze.ARG_ID, id);
                 }
             }
@@ -55,7 +57,7 @@ class AdressUserFragment : Fragment() {
 
 
     private fun carregarEndereco() {
-        if (addressId != null) {
+        if (addressId != null && addressId!! > 0) {
 
             val callback = object : Callback<Address> {
                 override fun onResponse(call: Call<Address>, response: Response<Address>) {
@@ -87,7 +89,7 @@ class AdressUserFragment : Fragment() {
             }
 
 
-            API(ctx).endereco.pesquisarPorId(addressId!!).enqueue(callback)
+            API(requireContext()).endereco.pesquisarPorId(addressId!!).enqueue(callback)
 
         }
 
@@ -103,11 +105,177 @@ class AdressUserFragment : Fragment() {
             binding.editEstado.setText(endereco.state);
             binding.editLogradouro.setText(endereco.street);
             binding.editNumero.setText(endereco.number);
-
-
+            binding.editIdAddress.setText(endereco.id.toString());
+            binding.switchEnderecoPadrao.isChecked = endereco.pattern == 1;
 
         }
     }
 
+    private fun validarEnderecoParaSalvar() {
+        binding.buttonSalvarEndereco.setOnClickListener {
+            if (validarCampos()) {
+                salvarEndereco()
+            }
+        }
+    }
+
+    private fun salvarEndereco() {
+
+
+        val endereco = prepararObjetoEndereco()
+
+        val callback = object : Callback<RespAddress> {
+
+            override fun onResponse(call: Call<RespAddress>, response: Response<RespAddress>) {
+                if (response.isSuccessful) {
+
+                    redirecionarUsuarioAposSalvar()
+
+                } else {
+                    val error = response.errorBody().toString()
+
+                    Snackbar.make(
+                        binding.scrollEndereco,
+                        "Não foi possível salvar o endereço",
+                        Snackbar.LENGTH_LONG
+                    ).show();
+
+                    Log.e("Erro", error);
+                }
+            }
+
+            override fun onFailure(call: Call<RespAddress>, t: Throwable) {
+                Snackbar.make(
+                    binding.scrollEndereco,
+                    "Não foi possível se conectar com o servidor",
+                    Snackbar.LENGTH_LONG
+                ).show();
+
+                Log.e("Erro", "Falha ao executar serviço", t);
+            }
+        }
+
+
+        if (endereco.id == 0)
+            API(requireContext()).endereco.criarEndereco(endereco).enqueue(callback)
+        else
+            API(requireContext()).endereco.salvarEndereco(endereco.id, endereco)
+                .enqueue(callback)
+
+    }
+
+    private fun prepararObjetoEndereco(): Address {
+
+        var check = 1;
+        if (!binding.switchEnderecoPadrao.isChecked)
+            check = 0;
+
+        return Address(
+            binding.editNumero.text.toString(),
+            binding.editCidade.text.toString(),
+            binding.editLogradouro.text.toString(),
+            "A",
+            binding.editAdressName.text.toString(),
+            binding.editEstado.text.toString(),
+            Integer.parseInt(binding.editIdAddress.text.toString()),
+            binding.editCep.text.toString(),
+            binding.editComplemento.text.toString(),
+            check
+        )
+
+    }
+
+    private fun validarCampos(): Boolean {
+        var semErros = true;
+
+        if (binding.editAdressName.text.isNullOrEmpty()) {
+            binding.textAdressName.error = "Informe um nome";
+            binding.editAdressName.requestFocus()
+            semErros = false;
+        }
+
+        if (binding.editCep.text.isNullOrEmpty()) {
+            binding.textCep.error = "Informe o CEP";
+            binding.editCep.requestFocus()
+            semErros = false;
+        }
+
+        if (binding.editCidade.text.isNullOrEmpty()) {
+            binding.textCidade.error = "Informe a cidade";
+            binding.editCidade.requestFocus()
+            semErros = false;
+        }
+
+        if (binding.editComplemento.text.isNullOrEmpty()) {
+            binding.textComplemento.error = "Informe o complemento";
+            binding.editComplemento.requestFocus()
+            semErros = false;
+        }
+
+        if (binding.editEstado.text.isNullOrEmpty()) {
+            binding.textEstado.error = "Informe o estado";
+            binding.editEstado.requestFocus()
+            semErros = false;
+        }
+
+        if (binding.editLogradouro.text.isNullOrEmpty()) {
+            binding.textLogradouro.error = "Informe o logradouro";
+            binding.editLogradouro.requestFocus()
+            semErros = false;
+        }
+
+
+        if (binding.editNumero.text.isNullOrEmpty()) {
+            binding.textNumero.error = "Informe o número";
+            binding.editNumero.requestFocus()
+            semErros = false;
+        }
+
+        return semErros;
+    }
+
+    private fun removerErros() {
+
+        binding.editAdressName.doOnTextChanged() { _, _, _, _ ->
+            binding.textAdressName.isErrorEnabled = false
+        }
+        binding.editCep.doOnTextChanged() { _, _, _, _ ->
+            binding.textCep.isErrorEnabled = false
+        }
+
+        binding.editCidade.doOnTextChanged() { _, _, _, _ ->
+            binding.textCidade.isErrorEnabled = false
+        }
+        binding.editComplemento.doOnTextChanged() { _, _, _, _ ->
+            binding.textComplemento.isErrorEnabled = false
+        }
+
+        binding.editEstado.doOnTextChanged() { _, _, _, _ ->
+            binding.textEstado.isErrorEnabled = false
+        }
+
+        binding.editLogradouro.doOnTextChanged() { _, _, _, _ ->
+            binding.textLogradouro.isErrorEnabled = false
+        }
+
+        binding.editNumero.doOnTextChanged() { _, _, _, _ ->
+            binding.textNumero.isErrorEnabled = false
+        }
+    }
+
+    private fun redirecionarUsuarioAposSalvar() {
+
+        val addressFrag = HomeFragment.newInstance(null);
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, addressFrag)
+            .addToBackStack(null)
+            .commit()
+
+        Snackbar.make(
+            binding.scrollEndereco,
+            "Endereço salvo",
+            Snackbar.LENGTH_LONG
+        ).show();
+    }
 
 }

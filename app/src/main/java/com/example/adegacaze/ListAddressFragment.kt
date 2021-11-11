@@ -19,7 +19,6 @@ import retrofit2.Response
 
 class ListAddressFragment : Fragment() {
     lateinit var binding: FragmentListAddressBinding;
-    lateinit var ctx: Context;
 
 
     override fun onCreateView(
@@ -27,14 +26,14 @@ class ListAddressFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentListAddressBinding.inflate(inflater, container, false)
-        if (container != null)
-            ctx = container.context;
+
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
         listarEnderecos()
+        novoEndereco()
     }
 
 
@@ -69,7 +68,7 @@ class ListAddressFragment : Fragment() {
         }
 
 
-        API(ctx).endereco.listar().enqueue(callback)
+        API(requireContext()).endereco.listar().enqueue(callback)
 
         controlarProgessBar(true)
     }
@@ -111,6 +110,16 @@ class ListAddressFragment : Fragment() {
     private fun abrirEndereco(addressBinding: FragmentAddressBinding, addressId: Int) {
         addressBinding.cardEndereco.setOnClickListener {
             val signUpFrag = AdressUserFragment.newInstance(addressId);
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, signUpFrag)
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    private fun novoEndereco() {
+        binding.buttonNovoEndereco.setOnClickListener {
+            val signUpFrag = AdressUserFragment.newInstance(null);
             parentFragmentManager.beginTransaction()
                 .replace(R.id.container, signUpFrag)
                 .addToBackStack(null)

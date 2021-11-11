@@ -28,7 +28,7 @@ class WelcomeFragment : Fragment() {
     private fun cadastrar() {
         binding.buttonSignUp.setOnClickListener {
 
-            val signUpFrag = UserRegisterFragment.newInstance();
+            val signUpFrag = UserRegisterFragment.newInstance(null);
             parentFragmentManager.beginTransaction()
                 .replace(R.id.container, signUpFrag)
                 .addToBackStack(null)

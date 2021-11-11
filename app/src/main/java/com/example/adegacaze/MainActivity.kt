@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.example.adegacaze.databinding.ActivityMainBinding
+import com.example.adegacaze.view.HomeFragment
 import com.example.adegacaze.view.OrdersFragment
 import com.example.adegacaze.view.ProductListFragment
 
@@ -20,6 +21,11 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        redirecionarUsuario()
     }
 
     private fun redirecionarUsuario() {
@@ -40,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun tratarBottomNavigation() {
 
-        val fragPadrao = UserProfileFragment.newInstance();
+        val fragPadrao = HomeFragment.newInstance(null);
         supportFragmentManager.beginTransaction().replace(R.id.container, fragPadrao)
             .commit()
 
@@ -60,8 +66,7 @@ class MainActivity : AppCompatActivity() {
                         .commit()
                 }
                 else -> {
-                    val fragProduct = ProductListFragment.newInstance();
-                    supportFragmentManager.beginTransaction().replace(R.id.container, fragProduct)
+                    supportFragmentManager.beginTransaction().replace(R.id.container, fragPadrao)
                         .commit()
                 }
             }

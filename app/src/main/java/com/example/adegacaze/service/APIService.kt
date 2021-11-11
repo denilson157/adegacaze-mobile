@@ -53,5 +53,9 @@ class API(val context: Context) {
         get() {
             return retrofit.create(ILoginService::class.java)
         }
+    val user: IUserService
+        get() {
+            return retrofit.create(IUserService::class.java)
+        }
 }
 

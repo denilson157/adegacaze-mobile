@@ -17,6 +17,7 @@ import com.example.adegacaze.model.Login
 import com.example.adegacaze.model.Order
 import com.example.adegacaze.model.UsuarioLogin
 import com.example.adegacaze.service.API
+import com.example.adegacaze.setUserPreferences
 import com.example.adegacaze.view.OrdersFragment
 import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
@@ -26,16 +27,12 @@ import retrofit2.Response
 class LoginFragment : Fragment() {
 
     lateinit var binding: FragmentLoginBinding;
-    lateinit var ctx: Context;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
-
-        if (container != null)
-            ctx = container.context;
 
         login()
         removerErros()
@@ -89,7 +86,7 @@ class LoginFragment : Fragment() {
                 }
 
 
-                API(ctx).login.login(objetoLogin).enqueue(callback)
+                API(requireContext()).login.login(objetoLogin).enqueue(callback)
             }
         }
     }
@@ -104,13 +101,7 @@ class LoginFragment : Fragment() {
                     Snackbar.LENGTH_LONG
                 ).show();
             } else {
-                val prefUser = ctx.getSharedPreferences("prefUser", Context.MODE_PRIVATE);
-                val editorUser = prefUser.edit()
-
-                editorUser.putString("Token", usuario.resp.token);
-                editorUser.putString("UserName", usuario.resp.user.name);
-
-                editorUser.commit();
+                setUserPreferences(requireContext(), usuario);
 
                 val intent = Intent(activity, MainActivity::class.java);
                 startActivity(intent);

@@ -71,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="CEP"
-                android:inputType="textEmailAddress"
+                android:inputType="number"
                 tools:layout_editor_absoluteX="32dp"
                 tools:layout_editor_absoluteY="126dp" />
 
@@ -102,7 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Rua"
-                android:inputType="date"
+                android:inputType="text"
                 tools:layout_editor_absoluteX="32dp"
                 tools:layout_editor_absoluteY="199dp" />
 
@@ -133,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Número"
-                android:inputType="date"
+                android:inputType="number"
                 tools:layout_editor_absoluteX="32dp"
                 tools:layout_editor_absoluteY="269dp" />
 
@@ -238,11 +238,11 @@
             app:layout_constraintTop_toBottomOf="@+id/textCidade" />
 
         <Button
-            android:id="@+id/buttonSignIn"
+            android:id="@+id/buttonSalvarEndereco"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
             android:backgroundTint="@color/red"
             android:text="cadastrar endereço"
@@ -251,6 +251,17 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/switchEnderecoPadrao" />
+
+        <EditText
+            android:id="@+id/editIdAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="0"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

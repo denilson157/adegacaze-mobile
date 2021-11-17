@@ -4,9 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.example.adegacaze.databinding.ActivityMainBinding
+import com.example.adegacaze.view.cart.CartFragment
 import com.example.adegacaze.view.HomeFragment
 import com.example.adegacaze.view.OrdersFragment
-import com.example.adegacaze.view.ProductListFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun tratarBottomNavigation() {
 
-        val fragPadrao = HomeFragment.newInstance(null);
+        val fragPadrao = HomeFragment.newInstance();
         supportFragmentManager.beginTransaction().replace(R.id.container, fragPadrao)
             .commit()
 
@@ -57,6 +57,12 @@ class MainActivity : AppCompatActivity() {
                     val userFrag = UserProfileFragment.newInstance();
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.container, userFrag)
+                        .commit()
+                }
+                R.id.carrinho -> {
+                    val carrinhoFrag = CartFragment.newInstance();
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, carrinhoFrag)
                         .commit()
                 }
                 R.id.receipt -> {

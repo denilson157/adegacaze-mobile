@@ -25,30 +25,23 @@ class SearchBarFragment : Fragment() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        pesquisarProdutos()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        pesquisarProdutos()
-    }
-
-
     private fun pesquisarProdutos() {
-        binding.fabPesquisar.setOnClickListener {
+        if (binding != null) {
+            binding.fabPesquisar.setOnClickListener {
 
-            if (binding.editPesquisar.text != null && binding.editPesquisar.text.toString() != "") {
+                if (binding.editPesquisar.text != null && binding.editPesquisar.text.toString() != "") {
 
-                val homeFrag = HomeFragment.newInstance(binding.editPesquisar.text.toString());
+                    val searchFrag =
+                        SearchProductFragment.newInstance(binding.editPesquisar.text.toString());
 
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.container, homeFrag)
-                    .addToBackStack(null)
-                    .commit()
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.container, searchFrag)
+                        .addToBackStack(null)
+                        .commit()
 
+                }
             }
+
         }
     }
 

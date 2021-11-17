@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import com.example.adegacaze.databinding.FragmentAdressUserBinding
 import com.example.adegacaze.model.Address
+import com.example.adegacaze.model.CEP
 import com.example.adegacaze.model.RespAddress
 import com.example.adegacaze.service.API
+import com.example.adegacaze.service.APICep
 import com.example.adegacaze.view.HomeFragment
 import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
@@ -31,9 +33,57 @@ class AdressUserFragment : Fragment() {
         carregarEndereco()
         validarEnderecoParaSalvar()
         removerErros()
-
+        buscarCEP()
         return binding.root
 
+    }
+
+    private fun buscarCEP() {
+        binding.fabPesquisaCEP.setOnClickListener {
+            if (binding.editCep.text != null) {
+
+                val callback = object : Callback<CEP> {
+                    override fun onResponse(call: Call<CEP>, response: Response<CEP>) {
+                        if (response.isSuccessful) {
+                            atualizarUICEP(response.body())
+                        } else {
+                            val error = response.errorBody().toString()
+
+                            showSnack(
+                                binding.scrollEndereco,
+                                "Não foi possível encontrar o cep digitado",
+                            )
+
+                            Log.e("Erro", error);
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CEP>, t: Throwable) {
+                        showSnack(
+                            binding.scrollEndereco,
+                            "Não foi possível se conectar com o servidor",
+                        )
+
+                        Log.e("Erro", "Falha ao executar serviço", t);
+                    }
+
+                }
+
+
+                APICep(requireContext()).cep.buscarCep(binding.editCep.text.toString())
+                    .enqueue(callback)
+
+            }
+        }
+    }
+
+    private fun atualizarUICEP(cep: CEP?) {
+        if (cep != null) {
+            binding.editLogradouro.setText(cep.logradouro)
+            binding.editEstado.setText(cep.uf)
+            binding.editCidade.setText(cep.localidade)
+
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,22 +116,20 @@ class AdressUserFragment : Fragment() {
                     } else {
                         val error = response.errorBody().toString()
 
-                        Snackbar.make(
+                        showSnack(
                             binding.scrollEndereco,
                             "Não foi possível carregar o endereço selecionado",
-                            Snackbar.LENGTH_LONG
-                        ).show();
+                        )
 
                         Log.e("Erro", error);
                     }
                 }
 
                 override fun onFailure(call: Call<Address>, t: Throwable) {
-                    Snackbar.make(
+                    showSnack(
                         binding.scrollEndereco,
                         "Não foi possível se conectar com o servidor",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                    )
 
                     Log.e("Erro", "Falha ao executar serviço", t);
                 }
@@ -134,22 +182,21 @@ class AdressUserFragment : Fragment() {
                 } else {
                     val error = response.errorBody().toString()
 
-                    Snackbar.make(
+                    showSnack(
                         binding.scrollEndereco,
                         "Não foi possível salvar o endereço",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                    )
 
                     Log.e("Erro", error);
                 }
             }
 
             override fun onFailure(call: Call<RespAddress>, t: Throwable) {
-                Snackbar.make(
+
+                showSnack(
                     binding.scrollEndereco,
                     "Não foi possível se conectar com o servidor",
-                    Snackbar.LENGTH_LONG
-                ).show();
+                )
 
                 Log.e("Erro", "Falha ao executar serviço", t);
             }
@@ -265,17 +312,16 @@ class AdressUserFragment : Fragment() {
 
     private fun redirecionarUsuarioAposSalvar() {
 
-        val addressFrag = HomeFragment.newInstance(null);
+        val addressFrag = HomeFragment.newInstance();
         parentFragmentManager.beginTransaction()
             .replace(R.id.container, addressFrag)
             .addToBackStack(null)
             .commit()
 
-        Snackbar.make(
+        showSnack(
             binding.scrollEndereco,
             "Endereço salvo",
-            Snackbar.LENGTH_LONG
-        ).show();
+        )
     }
 
 }

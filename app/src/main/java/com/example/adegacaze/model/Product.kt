@@ -4,7 +4,7 @@ data class Product(
     val updatedAt: String,
     val categoryId: Int,
     val price: String,
-    val oldPrice: String,
+    val old_price: String,
     val name: String,
     val createdAt: String,
     val description: String,

@@ -23,8 +23,17 @@ class UserProfileFragment : Fragment() {
         abrirEdicaoUsuario()
         sair()
 
-
+        preencherNomeUsuario()
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        preencherNomeUsuario()
+    }
+
+    private fun preencherNomeUsuario(){
+        binding.textUsername.text = getUserName(requireContext());
     }
 
     private fun sair() {

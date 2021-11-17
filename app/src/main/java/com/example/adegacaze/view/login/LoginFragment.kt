@@ -18,6 +18,7 @@ import com.example.adegacaze.model.Order
 import com.example.adegacaze.model.UsuarioLogin
 import com.example.adegacaze.service.API
 import com.example.adegacaze.setUserPreferences
+import com.example.adegacaze.showSnack
 import com.example.adegacaze.view.OrdersFragment
 import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
@@ -63,22 +64,21 @@ class LoginFragment : Fragment() {
                         } else {
                             val error = response.errorBody().toString()
 
-                            Snackbar.make(
+                            showSnack(
                                 binding.containerLogin,
-                                "Não foi possível fazer login",
-                                Snackbar.LENGTH_LONG
-                            ).show();
+                                "Não foi possível fazer login"
+                            )
 
                             Log.e("Erro", error);
                         }
                     }
 
                     override fun onFailure(call: Call<UsuarioLogin>, t: Throwable) {
-                        Snackbar.make(
+
+                        showSnack(
                             binding.containerLogin,
                             "Não foi possível se conectar com o servidor",
-                            Snackbar.LENGTH_LONG
-                        ).show();
+                        )
 
                         Log.e("Erro", "Falha ao executar serviço", t);
                     }
@@ -95,11 +95,10 @@ class LoginFragment : Fragment() {
         if (usuario != null) {
 
             if (usuario.resp == null) {
-                Snackbar.make(
+                showSnack(
                     binding.containerLogin,
                     usuario.message,
-                    Snackbar.LENGTH_LONG
-                ).show();
+                )
             } else {
                 setUserPreferences(requireContext(), usuario);
 
@@ -109,11 +108,10 @@ class LoginFragment : Fragment() {
             }
 
         } else
-            Snackbar.make(
+            showSnack(
                 binding.containerLogin,
                 "Não foi possível fazer login",
-                Snackbar.LENGTH_LONG
-            ).show();
+            )
     }
 
     private fun validarCampos(): Boolean {

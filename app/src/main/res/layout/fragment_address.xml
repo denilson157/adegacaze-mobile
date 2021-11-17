@@ -5,8 +5,7 @@
     android:id="@+id/cardEndereco"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="8dp"
-    tools:context=".AddressFragment">
+    android:elevation="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"

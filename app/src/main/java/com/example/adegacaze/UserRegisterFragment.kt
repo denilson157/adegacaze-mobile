@@ -13,7 +13,6 @@ import androidx.core.widget.doOnTextChanged
 import com.example.adegacaze.databinding.FragmentUserRegisterBinding
 import com.example.adegacaze.model.*
 import com.example.adegacaze.service.API
-import com.example.adegacaze.view.login.LoginFragment
 import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
@@ -53,22 +52,20 @@ class UserRegisterFragment : Fragment() {
                     } else {
                         val error = response.errorBody().toString()
 
-                        Snackbar.make(
+                        showSnack(
                             binding.scrollRegistroUsuario,
-                            "Não foi possível carregar perfil selecionado",
-                            Snackbar.LENGTH_LONG
-                        ).show();
+                            "Não foi possível carregar perfil selecionado"
+                        )
 
                         Log.e("Erro", error);
                     }
                 }
 
                 override fun onFailure(call: Call<User>, t: Throwable) {
-                    Snackbar.make(
+                    showSnack(
                         binding.scrollRegistroUsuario,
-                        "Não foi possível se conectar com o servidor",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                        "Não foi possível se conectar com o servidor"
+                    )
 
                     Log.e("Erro", "Falha ao executar serviço", t);
                 }
@@ -141,22 +138,21 @@ class UserRegisterFragment : Fragment() {
                 } else {
                     val error = response.errorBody().toString()
 
-                    Snackbar.make(
+                    showSnack(
                         binding.containerRegistroUsuario,
                         "Não foi possível registrar o usuário.",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                    )
 
                     Log.e("Erro", error);
                 }
             }
 
             override fun onFailure(call: Call<UsuarioLogin>, t: Throwable) {
-                Snackbar.make(
+                showSnack(
                     binding.containerRegistroUsuario,
                     "Não foi possível se conectar com o servidor",
-                    Snackbar.LENGTH_LONG
-                ).show();
+                )
+
 
                 Log.e("Erro", "Falha ao executar serviço", t);
             }
@@ -194,12 +190,10 @@ class UserRegisterFragment : Fragment() {
             if (userId == null || userId!! == 0)
                 redicionarHome()
             else if (userId == null && userId!! == 0)
-
-                Snackbar.make(
+                showSnack(
                     binding.scrollRegistroUsuario,
                     "Perfil atualizado",
-                    Snackbar.LENGTH_LONG
-                ).show();
+                )
 
         }
     }
@@ -213,7 +207,7 @@ class UserRegisterFragment : Fragment() {
         binding.imageCalendar.setOnClickListener {
             if (context != null)
                 DatePickerDialog(context, { calView, sYear, sMonth, sDay ->
-                    binding.editBirthday.setText("${sDay}/${sMonth}/${sYear}")
+                    binding.editBirthday.setText("${sDay}/${sMonth + 1}/${sYear}")
                 }, yyyy, mm, dd).show()
         }
     }
@@ -362,30 +356,28 @@ class UserRegisterFragment : Fragment() {
                 response: Response<RespUser>
             ) {
                 if (response.isSuccessful) {
-                    Snackbar.make(
+                    showSnack(
                         binding.containerRegistroUsuario,
                         "Perfil atualizado",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                    )
+
                 } else {
                     val error = response.errorBody().toString()
-
-                    Snackbar.make(
+                    showSnack(
                         binding.containerRegistroUsuario,
                         "Não foi possível registrar o usuário.",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                    )
 
                     Log.e("Erro", error);
                 }
             }
 
             override fun onFailure(call: Call<RespUser>, t: Throwable) {
-                Snackbar.make(
+                showSnack(
                     binding.containerRegistroUsuario,
                     "Não foi possível se conectar com o servidor",
-                    Snackbar.LENGTH_LONG
-                ).show();
+                )
+
 
                 Log.e("Erro", "Falha ao executar serviço", t);
             }

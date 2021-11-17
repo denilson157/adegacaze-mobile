@@ -46,22 +46,22 @@ class ListAddressFragment : Fragment() {
                 } else {
                     val error = response.errorBody().toString()
 
-                    Snackbar.make(
+                    showSnack(
                         binding.containerEnderecos,
                         "Não foi possível carregar os enderecos",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                    )
+
                     Log.e("Erro", error);
                 }
 
             }
 
             override fun onFailure(call: Call<List<Address>>, t: Throwable) {
-                Snackbar.make(
+                showSnack(
                     binding.containerEnderecos,
                     "Não foi possível se conectar com o servidor",
-                    Snackbar.LENGTH_LONG
-                ).show();
+                )
+
                 controlarProgessBar(false)
                 Log.e("Erro", "Falha ao executar serviço", t);
             }

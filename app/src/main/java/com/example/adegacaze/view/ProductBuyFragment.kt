@@ -1,6 +1,7 @@
 package com.example.adegacaze.view
 
 import android.content.Context
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -14,8 +15,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import com.example.adegacaze.databinding.FragmentProductBuyBinding
 import com.example.adegacaze.databinding.FragmentSearchBarBinding
+import com.example.adegacaze.formatarDouble
+import com.example.adegacaze.model.AddCart
+import com.example.adegacaze.model.AddCartResp
 import com.example.adegacaze.model.Product
 import com.example.adegacaze.service.API
+import com.example.adegacaze.showSnack
 import com.google.android.material.snackbar.Snackbar
 
 private const val ARG_ID = "id"
@@ -23,6 +28,10 @@ private const val ARG_ID = "id"
 class ProductBuyFragment : Fragment() {
     lateinit var binding: FragmentProductBuyBinding;
     private var productId: Int? = null;
+
+    private var quantidade = 0;
+    private var valorTotal = 0.0;
+    private var precoProduto = 0.0;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,28 +63,27 @@ class ProductBuyFragment : Fragment() {
                     } else {
                         val error = response.errorBody().toString()
 
-                        Snackbar.make(
+                        showSnack(
                             binding.scrollProduto,
                             "Não foi possível carregar o produto selecionado",
-                            Snackbar.LENGTH_LONG
-                        ).show();
+                        )
 
                         Log.e("Erro", error);
                     }
                 }
 
                 override fun onFailure(call: Call<Product>, t: Throwable) {
-                    Snackbar.make(
+                    showSnack(
                         binding.scrollProduto,
                         "Não foi possível se conectar com o servidor",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                    )
 
                     Log.e("Erro", "Falha ao executar serviço", t);
                 }
             }
 
             API(requireContext()).produto.pesquisarPorId(productId!!).enqueue(callback)
+            atualizarUITotal()
         }
 
     }
@@ -85,11 +93,17 @@ class ProductBuyFragment : Fragment() {
 
 
             binding.textNome.text = produto.name;
-            binding.textAntigoPreco.text = produto.oldPrice;
-            binding.textPreco.text = produto.price;
+            binding.textAntigoPreco.text = formatarDouble(produto.old_price.toDouble());
+            binding.textAntigoPreco.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG;
+            binding.textPreco.text = formatarDouble(produto.price.toDouble());
+
+            precoProduto = produto.price.toDouble();
             val uriImage = Uri.parse(produto.img_id)
 
             Picasso.get().load(uriImage).into(binding.imagemProduto);
+            controlarQuantidadeItem()
+            adicionarCarrinho()
+            atualizarUITotal()
         }
     }
 
@@ -103,6 +117,53 @@ class ProductBuyFragment : Fragment() {
 
     }
 
+    private fun adicionarCarrinho() {
+        binding.buttonAddToCart.setOnClickListener {
+
+            if (productId != null && quantidade > 0) {
+
+                val objetoAdd = AddCart(productId!!, quantidade);
+
+                val callback = object : Callback<AddCartResp> {
+
+                    override fun onResponse(
+                        call: Call<AddCartResp>,
+                        response: Response<AddCartResp>
+                    ) {
+                        if (response.isSuccessful) {
+
+                            showSnack(
+                                binding.scrollProduto,
+                                "Produto adicionado ao carrinho"
+                            )
+
+                        } else {
+                            val error = response.errorBody().toString()
+                            showSnack(
+                                binding.scrollProduto,
+                                "Não foi possível carregar o produto selecionado",
+                            )
+
+                            Log.e("Erro", error);
+                        }
+                    }
+
+                    override fun onFailure(call: Call<AddCartResp>, t: Throwable) {
+
+                        showSnack(
+                            binding.scrollProduto,
+                            "Não foi possível se conectar com o servidor",
+                        )
+
+                        Log.e("Erro", "Falha ao executar serviço", t);
+                    }
+                }
+
+                API(requireContext()).cart.addCart(objetoAdd).enqueue(callback)
+            }
+        }
+    }
+
 
     companion object {
         fun newInstance(id: Int) = ProductBuyFragment()
@@ -111,5 +172,57 @@ class ProductBuyFragment : Fragment() {
                     putInt(ARG_ID, id);
                 }
             }
+    }
+
+    private fun controlarQuantidadeItem() {
+
+        binding.imageAdd1.setOnClickListener {
+            adicionar(1);
+        }
+        binding.imageAdd6.setOnClickListener {
+            adicionar(6);
+        }
+        binding.imageAdd12.setOnClickListener {
+            adicionar(12);
+        }
+
+        binding.imageRemove1.setOnClickListener {
+            remover(1);
+        }
+        binding.imageRemove6.setOnClickListener {
+            remover(6);
+        }
+        binding.imageRemove12.setOnClickListener {
+            remover(12);
+        }
+
+    }
+
+    private fun adicionar(qtd: Int) {
+        val novaQuantidade = quantidade + qtd;
+        val novoValor = novaQuantidade * precoProduto;
+
+        quantidade = novaQuantidade;
+        valorTotal = novoValor;
+
+        atualizarUITotal();
+    }
+
+    private fun remover(qtd: Int) {
+        var novaQuantidade = quantidade - qtd;
+        if (novaQuantidade < 0)
+            novaQuantidade = 0;
+
+        val novoValor = novaQuantidade * precoProduto;
+
+        quantidade = novaQuantidade;
+        valorTotal = novoValor;
+
+        atualizarUITotal();
+    }
+
+    private fun atualizarUITotal() {
+        binding.textQtdTotal.text = quantidade.toString();
+        binding.textValorTotal.text = formatarDouble(valorTotal)
     }
 }

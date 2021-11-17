@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit
 class API(val context: Context) {
     private val baseUrl = "http://192.168.15.64:8080/";
 
-    private var tokenAuthorization: String? = null;
 
     private val retrofit: Retrofit
         get() {
@@ -57,5 +56,32 @@ class API(val context: Context) {
         get() {
             return retrofit.create(IUserService::class.java)
         }
+    val category: ICategoryService
+        get() {
+            return retrofit.create(ICategoryService::class.java)
+        }
+    val cart: ICartService
+        get() {
+            return retrofit.create(ICartService::class.java)
+        }
 }
 
+
+class APICep(val context: Context) {
+    private val baseUrl = "https://viacep.com.br/";
+
+    private val retrofit: Retrofit
+        get() {
+
+            return Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+
+
+    val cep: ICepService
+        get() {
+            return retrofit.create(ICepService::class.java)
+        }
+}

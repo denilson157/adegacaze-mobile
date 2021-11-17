@@ -1,6 +1,7 @@
 package com.example.adegacaze.view
 
 import android.content.Context
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,10 +13,12 @@ import com.example.adegacaze.R
 import com.example.adegacaze.UserRegisterFragment
 import com.example.adegacaze.databinding.FragmentProductListBinding
 import com.example.adegacaze.databinding.FragmentProductBinding
+import com.example.adegacaze.formatarDouble
 import com.example.adegacaze.model.Product
 import com.example.adegacaze.model.ProductSearch
 import com.example.adegacaze.service.API
 import com.example.adegacaze.service.IProductService
+import com.example.adegacaze.showSnack
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -70,11 +73,11 @@ class ProductListFragment : Fragment() {
                 } else {
                     val error = response.errorBody().toString()
 
-                    Snackbar.make(
+                    showSnack(
                         binding.containerProdutos,
                         "Não foi possível carregar os produtos",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                    )
+
 
                     Log.e("Erro", error);
                 }
@@ -82,11 +85,10 @@ class ProductListFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<List<Product>>, t: Throwable) {
-                Snackbar.make(
+                showSnack(
                     binding.containerProdutos,
                     "Não foi possível se conectar com o servidor",
-                    Snackbar.LENGTH_LONG
-                ).show();
+                )
 
                 Log.e("Erro", "Falha ao executar serviço", t);
                 mostrarShimmer(false)
@@ -118,8 +120,9 @@ class ProductListFragment : Fragment() {
                 abrirProduto(productBinding, it.id);
 
                 productBinding.textNome.text = it.name;
-                productBinding.textAntigoPreco.text = it.oldPrice;
-                productBinding.textPreco.text = it.price;
+                productBinding.textAntigoPreco.text = formatarDouble(it.old_price.toDouble());
+                productBinding.textAntigoPreco.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG;
+                productBinding.textPreco.text = formatarDouble(it.price.toDouble());
                 val uriImage = Uri.parse(it.img_id)
 
                 Picasso.get().load(uriImage).into(productBinding.imagemProduto);
@@ -134,7 +137,7 @@ class ProductListFragment : Fragment() {
     private fun abrirProduto(productBinding: FragmentProductBinding, produtoId: Int) {
         productBinding.cardProduto.setOnClickListener {
             val signUpFrag = ProductBuyFragment.newInstance(produtoId);
-            parentFragmentManager.beginTransaction()
+            parentFragmentManager?.beginTransaction()
                 .replace(R.id.container, signUpFrag)
                 .addToBackStack(null)
                 .commit()
@@ -172,4 +175,6 @@ class ProductListFragment : Fragment() {
                 }
             }
     }
+
+
 }

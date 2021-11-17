@@ -1,26 +1,24 @@
 package com.example.adegacaze.view
 
-import android.content.Context
+
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.adegacaze.R
+import com.example.adegacaze.*
 import com.example.adegacaze.databinding.FragmentOrderBinding
 import com.example.adegacaze.databinding.FragmentOrdersBinding
 import com.example.adegacaze.model.Order
 import com.example.adegacaze.model.ProductsItem
 import com.example.adegacaze.service.API
-import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class OrdersFragment : Fragment() {
     lateinit var binding: FragmentOrdersBinding;
-    lateinit var ctx: Context;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,15 +26,18 @@ class OrdersFragment : Fragment() {
     ): View? {
         binding = FragmentOrdersBinding.inflate(inflater, container, false)
 
-        if (container != null)
-            ctx = container.context;
-
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
         listarPedidos()
+        val searchFrag = SearchBarFragment.newInstance()
+
+        parentFragmentManager.beginTransaction()
+            .replace(binding.fragmentSearchBar.id, searchFrag)
+            .addToBackStack(null)
+            .commit()
     }
 
     companion object {
@@ -46,36 +47,45 @@ class OrdersFragment : Fragment() {
     private fun listarPedidos() {
         val callback = object : Callback<List<Order>> {
             override fun onResponse(call: Call<List<Order>>, response: Response<List<Order>>) {
+                controlarProgessBar(false)
                 if (response.isSuccessful) {
                     atualizarUIPedidos(response.body())
                 } else {
                     val error = response.errorBody().toString()
 
-                    Snackbar.make(
+                    showSnack(
                         binding.containerPedidos,
                         "Não foi possível carregar os enderecos",
-                        Snackbar.LENGTH_LONG
-                    ).show();
+                    )
 
                     Log.e("Erro", error);
                 }
             }
 
             override fun onFailure(call: Call<List<Order>>, t: Throwable) {
-                Snackbar.make(
+
+                showSnack(
                     binding.containerPedidos,
                     "Não foi possível se conectar com o servidor",
-                    Snackbar.LENGTH_LONG
-                ).show();
+                )
 
+                controlarProgessBar(false)
                 Log.e("Erro", "Falha ao executar serviço", t);
             }
 
         }
 
 
-        API(ctx).pedido.listar().enqueue(callback)
+        API(requireContext()).pedido.listar().enqueue(callback)
+        controlarProgessBar(true)
 
+    }
+
+    private fun controlarProgessBar(mostrar: Boolean) {
+        if (mostrar)
+            binding.progressBarPedidos.visibility = View.VISIBLE;
+        else
+            binding.progressBarPedidos.visibility = View.GONE;
     }
 
     private fun atualizarUIPedidos(pedidos: List<Order>?) {
@@ -88,9 +98,15 @@ class OrdersFragment : Fragment() {
                 val pedidoBinding = FragmentOrderBinding.inflate(layoutInflater)
                 var produtos: List<ProductsItem> = it.products;
 
-                pedidoBinding.textDataPedido.text = it.createdAt;
+                pedidoBinding.textDataPedido.text = formatDate(
+                    it.created_at, "yyyy-mm-dd", "dd/mm/yyyy"
+                )
                 pedidoBinding.textQtdItens.text = it.products.count().toString();
-                pedidoBinding.textTotalPedido.text = produtos.map { x -> x.price }.sum().toString()
+                pedidoBinding.textTotalPedido.text = formatarDouble(produtos.map { x ->
+
+                    x.pivot.price * x.pivot.quantity
+
+                }.sum())
 
                 abrirPedido(pedidoBinding, it.id)
 

@@ -21,4 +21,6 @@ interface IAddressService {
     @PUT("api/address/{id}")
     fun salvarEndereco(@Path("id") id: Int, @Body endereco: Address): Call<RespAddress>
 
+    @POST("api/address/pattern")
+    fun pegarEnderecoPadrao(): Call<Address>
 }

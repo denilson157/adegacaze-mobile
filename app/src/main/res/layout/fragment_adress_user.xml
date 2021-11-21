@@ -91,7 +91,9 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="2dp"
                 android:clickable="true"
+                app:tint="#FBF5F5"
                 app:backgroundTint="@color/red"
+                app:rippleColor="#FFFFFF"
                 app:srcCompat="@drawable/search"
                 tools:ignore="SpeakableTextPresentCheck" />
         </LinearLayout>

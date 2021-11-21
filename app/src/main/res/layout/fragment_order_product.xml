@@ -8,14 +8,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:gravity="left"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/textNomeProduto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nome Produto" />
+            android:text="Nome Produto"
+            android:textSize="16sp" />
 
 
         <TextView
@@ -23,7 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Preco" />
+            android:text="Preco"
+            android:textSize="16sp"/>
 
 
         <TextView
@@ -31,7 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Quantidade" />
+            android:text="Quantidade"
+            android:textSize="16sp"/>
 
 
         <TextView
@@ -39,21 +42,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="produto(s)" />
+            android:text="produto(s)"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/textNada"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="=" />
+            android:text="="
+            android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/textPrecoTotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Preco" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:orientation="horizontal"
+            android:textSize="16sp">
+
+            <TextView
+                android:id="@+id/textPrecoTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Preco"
+                android:textSize="16sp" />
+        </LinearLayout>
 
 
     </LinearLayout>

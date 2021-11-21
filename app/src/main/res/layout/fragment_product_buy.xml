@@ -161,20 +161,23 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="32dp"
                     android:orientation="horizontal">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="4dp">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/cardAddUnidade6"
                             android:layout_width="160dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center|start"
-                            android:layout_marginStart="32dp"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginBottom="16dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="4dp"
                             android:minHeight="32dp"
                             app:cardCornerRadius="20dp"
                             app:cardElevation="3dp"
@@ -234,9 +237,6 @@
                             android:layout_width="160dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center|start"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginEnd="32dp"
-                            android:layout_marginBottom="16dp"
                             android:minHeight="32dp"
                             app:cardCornerRadius="20dp"
                             app:cardElevation="3dp"
@@ -298,20 +298,24 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="32dp"
                 android:orientation="horizontal">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical">
 
                     <TextView
                         android:id="@+id/textQtdTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
-                        android:layout_marginTop="32dp"
+                        android:gravity="center_vertical"
                         android:text="0"
                         android:textColor="@color/red"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/textValorTotal"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -320,23 +324,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
-                        android:layout_marginTop="32dp"
                         android:text="Total: R$"
                         android:textColor="@color/red"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <Button
-                        android:id="@+id/buttonAddToCart"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="32dp"
-                        android:backgroundTint="@color/red"
-                        android:text="adicionar"
-                        android:textColor="@color/white"
-                        app:icon="@drawable/ic_baseline_shopping_cart_24"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -344,10 +336,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="32dp"
                         android:text="0"
                         android:textColor="@color/red"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/textView4"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/buttonAddToCart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="32dp"
+                        android:backgroundTint="@color/red"
+                        android:text="adicionar"
+                        android:textColor="@color/white"
+                        app:icon="@drawable/ic_baseline_shopping_cart_24"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

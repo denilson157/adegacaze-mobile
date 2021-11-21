@@ -37,35 +37,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/layoutProdutos">
 
-
-            <FrameLayout
-                android:id="@+id/frameCerveja"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" />
-
-
-            <FrameLayout
-                android:id="@+id/frameVinho"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" />
-
-            <FrameLayout
-                android:id="@+id/frameDestilados"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" />
-
-            <FrameLayout
-                android:id="@+id/frameNaoAlcoolico"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" />
 
         </LinearLayout>
+
     </ScrollView>
 
 

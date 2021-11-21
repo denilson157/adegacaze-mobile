@@ -4,8 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.example.adegacaze.databinding.ActivityMainBinding
-import com.example.adegacaze.view.cart.CartFragment
 import com.example.adegacaze.view.HomeFragment
+import com.example.adegacaze.view.cart.CartFragment
 import com.example.adegacaze.view.OrdersFragment
 
 class MainActivity : AppCompatActivity() {
@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         val fragPadrao = HomeFragment.newInstance();
         supportFragmentManager.beginTransaction().replace(R.id.container, fragPadrao)
+            .addToBackStack(null)
             .commit()
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {

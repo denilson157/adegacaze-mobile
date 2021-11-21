@@ -9,17 +9,27 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="4dp">
 
+
+        <ImageView
+            android:id="@+id/qrCodeImage"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/qcode_scanner"
+            app:srcCompat="@drawable/qcode_scanner" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/editPesquisarInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="319dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             app:boxBackgroundColor="@color/white"
             app:boxBackgroundMode="outline"
             app:boxCornerRadiusBottomEnd="4dp"
@@ -35,24 +45,20 @@
                 android:id="@+id/editPesquisar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/search"
-                android:hint="Pesquisar produtos" />
+                android:layout_weight="1"
+                android:hint="Pesquisar produtos"
+                tools:ignore="TouchTargetSizeCheck" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <ImageView
             android:id="@+id/fabPesquisar"
-            android:layout_width="80dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"
-            android:clickable="true"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
             android:src="@drawable/search"
-            app:backgroundTint="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editPesquisarInputLayout"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SpeakableTextPresentCheck" />
+            app:tint="@color/white" />
 
     </LinearLayout>
 </FrameLayout>

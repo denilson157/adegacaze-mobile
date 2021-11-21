@@ -3,6 +3,7 @@
     package="com.example.adegacaze">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -12,11 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AdegaCaze"
         android:usesCleartextTraffic="true">
-
         <activity
-            android:name=".view.login.LoginActivity"
+            android:name=".view.QrCodeActivity"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true"

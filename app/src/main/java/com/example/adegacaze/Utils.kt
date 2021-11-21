@@ -1,5 +1,6 @@
 package com.example.adegacaze
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
@@ -68,4 +69,12 @@ fun showSnack(view: View, titulo: String) {
         titulo,
         Snackbar.LENGTH_SHORT
     ).show();
+}
+
+fun mostrarDialog(context: Context, msg: String) {
+    AlertDialog.Builder(context)
+        .setMessage(msg)
+        .setPositiveButton("OK", null)
+        .create()
+        .show()
 }

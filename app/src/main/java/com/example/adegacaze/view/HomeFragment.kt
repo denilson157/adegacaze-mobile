@@ -94,7 +94,12 @@ class HomeFragment : Fragment() {
 
 
     private fun swipeRefresh() {
-        pesquisarProdutos()
+        binding.swipeRefreshHome.setOnRefreshListener {
+
+
+            binding.swipeRefreshHome.isRefreshing = true;
+            pesquisarProdutos()
+        }
     }
 
     private fun pesquisarProdutosPorCateogria(
@@ -146,6 +151,7 @@ class HomeFragment : Fragment() {
             frag.shimmer.visibility = View.INVISIBLE;
             frag.shimmer.stopShimmer();
             frag.containerProdutos.visibility = View.VISIBLE;
+            binding.swipeRefreshHome.isRefreshing = false;
         }
     }
 
@@ -186,9 +192,9 @@ class HomeFragment : Fragment() {
 
     private fun abrirProduto(productBinding: FragmentProductBinding, produtoId: Int) {
         productBinding.cardProduto.setOnClickListener {
-            val signUpFrag = ProductBuyFragment.newInstance(produtoId);
+            val productFrag = ProductBuyFragment.newInstance(produtoId);
             parentFragmentManager?.beginTransaction()
-                .replace(R.id.container, signUpFrag)
+                .replace(R.id.container, productFrag)
                 .addToBackStack(null)
                 .commit()
         }

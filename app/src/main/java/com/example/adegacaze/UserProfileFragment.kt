@@ -32,8 +32,15 @@ class UserProfileFragment : Fragment() {
         preencherNomeUsuario()
     }
 
-    private fun preencherNomeUsuario(){
-        binding.textUsername.text = getUserName(requireContext());
+    private fun preencherNomeUsuario() {
+        var nomeUsuario = getUserName(requireContext());
+        if (nomeUsuario != null) {
+
+            val nomes = nomeUsuario.split(" ").toTypedArray();
+            val primeiroNome = nomes.elementAt(0);
+
+            binding.textUsername.text = primeiroNome;
+        }
     }
 
     private fun sair() {
@@ -51,7 +58,7 @@ class UserProfileFragment : Fragment() {
         binding.cardEndereco.setOnClickListener {
 
 
-            val addressFrag = ListAddressFragment.newInstance();
+            val addressFrag = ListAddressFragment.newInstance(false);
             parentFragmentManager.beginTransaction()
                 .replace(R.id.container, addressFrag)
                 .addToBackStack(null)

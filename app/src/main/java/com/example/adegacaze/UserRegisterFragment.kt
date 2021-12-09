@@ -47,6 +47,7 @@ class UserRegisterFragment : Fragment() {
 
             val callback = object : Callback<User> {
                 override fun onResponse(call: Call<User>, response: Response<User>) {
+                    controlarProgessBar(false)
                     if (response.isSuccessful) {
                         atualizarUIUsuario(response.body())
                     } else {
@@ -67,6 +68,7 @@ class UserRegisterFragment : Fragment() {
                         "Não foi possível se conectar com o servidor"
                     )
 
+                    controlarProgessBar(false)
                     Log.e("Erro", "Falha ao executar serviço", t);
                 }
 
@@ -77,6 +79,7 @@ class UserRegisterFragment : Fragment() {
 
             API(requireContext()).user.pesquisarPorId(userId!!).enqueue(callback)
 
+            controlarProgessBar(true)
         }
 
     }
@@ -128,6 +131,7 @@ class UserRegisterFragment : Fragment() {
                 call: Call<UsuarioLogin>,
                 response: Response<UsuarioLogin>
             ) {
+                controlarProgessBar(false)
                 if (response.isSuccessful) {
                     val usuario = response.body()
                     if (usuario != null) {
@@ -143,6 +147,7 @@ class UserRegisterFragment : Fragment() {
                         "Não foi possível registrar o usuário.",
                     )
 
+
                     Log.e("Erro", error);
                 }
             }
@@ -152,7 +157,7 @@ class UserRegisterFragment : Fragment() {
                     binding.containerRegistroUsuario,
                     "Não foi possível se conectar com o servidor",
                 )
-
+                controlarProgessBar(false)
 
                 Log.e("Erro", "Falha ao executar serviço", t);
             }
@@ -160,6 +165,8 @@ class UserRegisterFragment : Fragment() {
         }
 
         API(requireContext()).user.registrar(objetoRegistro).enqueue(callback)
+
+        controlarProgessBar(true)
     }
 
     private fun prepararObjetoUsuario(): User {
@@ -355,6 +362,7 @@ class UserRegisterFragment : Fragment() {
                 call: Call<RespUser>,
                 response: Response<RespUser>
             ) {
+                controlarProgessBar(false)
                 if (response.isSuccessful) {
                     showSnack(
                         binding.containerRegistroUsuario,
@@ -379,6 +387,7 @@ class UserRegisterFragment : Fragment() {
                 )
 
 
+                controlarProgessBar(false)
                 Log.e("Erro", "Falha ao executar serviço", t);
             }
 
@@ -387,5 +396,14 @@ class UserRegisterFragment : Fragment() {
         API(requireContext()).user.salvarUsuario(user.id, user)
             .enqueue(callback)
 
+        controlarProgessBar(true)
+    }
+
+
+    private fun controlarProgessBar(mostrar: Boolean) {
+        if (mostrar)
+            binding.progressBarCadastroUsuario.visibility = View.VISIBLE;
+        else
+            binding.progressBarCadastroUsuario.visibility = View.GONE;
     }
 }

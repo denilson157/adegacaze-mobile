@@ -22,6 +22,7 @@ class SearchBarFragment : Fragment() {
     ): View? {
 
         binding = FragmentSearchBarBinding.inflate(inflater, container, false)
+
         pesquisarProdutos()
         iniciarQrCode();
 
@@ -70,9 +71,9 @@ class SearchBarFragment : Fragment() {
         if (requestCode == 1 && data != null) {
             if (resultCode == RESULT_OK) {
 
-                val produtoId = data.getStringExtra("qrcode") as String;
+                val produtoId = Integer.parseInt(data.getStringExtra("qrcode") as String);
 
-                val productFrag = ProductBuyFragment.newInstance(Integer.parseInt(produtoId));
+                val productFrag = ProductBuyFragment.newInstance(produtoId);
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.container, productFrag)
                     .addToBackStack(null)

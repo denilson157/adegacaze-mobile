@@ -6,15 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.adegacaze.R
+import com.example.adegacaze.*
 import com.example.adegacaze.databinding.*
-import com.example.adegacaze.formatarDouble
 import com.example.adegacaze.model.Address
 import com.example.adegacaze.model.Cart
 import com.example.adegacaze.model.InsertOrder
 import com.example.adegacaze.model.RespInsertOrder
 import com.example.adegacaze.service.API
-import com.example.adegacaze.showSnack
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -95,10 +93,11 @@ class MakeOrderFragment : Fragment() {
                 } else {
                     val error = response.errorBody().toString()
 
-                    showSnack(
-                        binding.cardEndereco,
-                        "Você não possui endereço padrão"
-                    )
+                    val addressFrag = ListAddressFragment.newInstance(true);
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.container, addressFrag)
+                        .addToBackStack(null)
+                        .commit()
 
                     Log.e("Erro", error);
                 }
@@ -128,6 +127,14 @@ class MakeOrderFragment : Fragment() {
             binding.textComplemento.text = endereco.complete;
             binding.textCidade.text = endereco.city;
             binding.textCEP.text = endereco.cep;
+        } else {
+
+            val addressFrag = ListAddressFragment.newInstance(true);
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, addressFrag)
+                .addToBackStack(null)
+                .commit()
+
         }
     }
 

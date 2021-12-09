@@ -12,20 +12,25 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding;
 
+    fun mostrarBottom() {
+        val token = getTokenUser(this);
+        if (token != null && token != "") {
+            binding.bottomNavigationView.visibility = View.VISIBLE;
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         redirecionarUsuario()
-
+        val token = getTokenUser(this);
+        if (token != null && token != "") {
+            binding.bottomNavigationView.visibility = View.VISIBLE;
+        }
         setContentView(binding.root)
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        redirecionarUsuario()
     }
 
     private fun redirecionarUsuario() {

@@ -77,6 +77,10 @@ class SearchProductFragment : Fragment() {
 
 
     private fun pesquisarProdutos() {
+        if (productName != null)
+            binding.textTextoPesquisa.text = productName!!;
+        else
+            binding.textTextoPesquisa.text = "";
 
 
         val callbackCategorias = object : Callback<List<Category>> {

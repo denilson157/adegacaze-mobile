@@ -8,8 +8,13 @@ data class Order(
 	val adress_id: Int,
 	val created_at: String,
 	val adress: Address,
+	val status: StatusOrder,
 	val id: Int,
 	val products: List<ProductsItem>
+)
+
+data class StatusOrder(
+	val name: String
 )
 
 data class Pivot(

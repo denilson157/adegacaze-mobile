@@ -1,6 +1,5 @@
 package com.example.adegacaze.view
 
-
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -97,7 +96,7 @@ class OrdersFragment : Fragment() {
             pedidos.forEach {
                 val pedidoBinding = FragmentOrderBinding.inflate(layoutInflater)
                 var produtos: List<ProductsItem> = it.products;
-
+                pedidoBinding.textStatusProduto.text = it.status.name;
                 pedidoBinding.textDataPedido.text = formatDate(
                     it.created_at, "yyyy-mm-dd", "dd/mm/yyyy"
                 )
@@ -114,6 +113,13 @@ class OrdersFragment : Fragment() {
                 binding.containerPedidos.addView(pedidoBinding.root)
 
             }
+        }
+
+
+        if(pedidos?.count() == 0) {
+            binding.frameAuxiliar.visibility = View.VISIBLE;
+        } else {
+            binding.frameAuxiliar.visibility = View.GONE;
         }
     }
 

@@ -1,6 +1,5 @@
 package com.example.adegacaze
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,14 +10,18 @@ import com.example.adegacaze.databinding.FragmentAddressBinding
 import com.example.adegacaze.databinding.FragmentListAddressBinding
 import com.example.adegacaze.model.Address
 import com.example.adegacaze.service.API
-import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+private const val ARG_SHOW = "SHOW_MESSAGE"
 
 class ListAddressFragment : Fragment() {
     lateinit var binding: FragmentListAddressBinding;
+    private var showMessage: Boolean = false;
 
 
     override fun onCreateView(
@@ -27,6 +30,7 @@ class ListAddressFragment : Fragment() {
     ): View? {
         binding = FragmentListAddressBinding.inflate(inflater, container, false)
 
+
         return binding.root
     }
 
@@ -34,6 +38,12 @@ class ListAddressFragment : Fragment() {
         super.onResume()
         listarEnderecos()
         novoEndereco()
+        if (showMessage) {
+            showSnack(
+                binding.containerEnderecos,
+                "Cadastre um endereço para continuar sua compra"
+            )
+        }
     }
 
 
@@ -52,6 +62,20 @@ class ListAddressFragment : Fragment() {
                     )
 
                     Log.e("Erro", error);
+
+
+                    val valueEventListener = object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot){
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+
+                    }
+
+
                 }
 
             }
@@ -130,6 +154,11 @@ class ListAddressFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = ListAddressFragment()
+        fun newInstance(showMessage: Boolean) = ListAddressFragment()
+            .apply {
+                arguments = Bundle().apply {
+                    putBoolean(com.example.adegacaze.ARG_SHOW, showMessage);
+                }
+            }
     }
 }

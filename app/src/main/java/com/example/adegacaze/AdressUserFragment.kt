@@ -44,6 +44,7 @@ class AdressUserFragment : Fragment() {
 
                 val callback = object : Callback<CEP> {
                     override fun onResponse(call: Call<CEP>, response: Response<CEP>) {
+                        controlarProgessBar(false)
                         if (response.isSuccessful) {
                             atualizarUICEP(response.body())
                         } else {
@@ -63,7 +64,7 @@ class AdressUserFragment : Fragment() {
                             binding.scrollEndereco,
                             "Não foi possível se conectar com o servidor",
                         )
-
+                        controlarProgessBar(false)
                         Log.e("Erro", "Falha ao executar serviço", t);
                     }
 
@@ -72,6 +73,7 @@ class AdressUserFragment : Fragment() {
 
                 APICep(requireContext()).cep.buscarCep(binding.editCep.text.toString())
                     .enqueue(callback)
+                controlarProgessBar(true)
 
             }
         }
@@ -111,6 +113,7 @@ class AdressUserFragment : Fragment() {
 
             val callback = object : Callback<Address> {
                 override fun onResponse(call: Call<Address>, response: Response<Address>) {
+                    controlarProgessBar(false)
                     if (response.isSuccessful) {
                         atualizarUIEndereco(response.body())
                     } else {
@@ -130,7 +133,7 @@ class AdressUserFragment : Fragment() {
                         binding.scrollEndereco,
                         "Não foi possível se conectar com o servidor",
                     )
-
+                    controlarProgessBar(false)
                     Log.e("Erro", "Falha ao executar serviço", t);
                 }
 
@@ -138,7 +141,7 @@ class AdressUserFragment : Fragment() {
 
 
             API(requireContext()).endereco.pesquisarPorId(addressId!!).enqueue(callback)
-
+            controlarProgessBar(true)
         }
 
     }
@@ -175,6 +178,7 @@ class AdressUserFragment : Fragment() {
         val callback = object : Callback<RespAddress> {
 
             override fun onResponse(call: Call<RespAddress>, response: Response<RespAddress>) {
+                controlarProgessBar(false)
                 if (response.isSuccessful) {
 
                     redirecionarUsuarioAposSalvar()
@@ -188,6 +192,7 @@ class AdressUserFragment : Fragment() {
                     )
 
                     Log.e("Erro", error);
+
                 }
             }
 
@@ -197,7 +202,7 @@ class AdressUserFragment : Fragment() {
                     binding.scrollEndereco,
                     "Não foi possível se conectar com o servidor",
                 )
-
+                controlarProgessBar(false)
                 Log.e("Erro", "Falha ao executar serviço", t);
             }
         }
@@ -209,6 +214,7 @@ class AdressUserFragment : Fragment() {
             API(requireContext()).endereco.salvarEndereco(endereco.id, endereco)
                 .enqueue(callback)
 
+        controlarProgessBar(true)
     }
 
     private fun prepararObjetoEndereco(): Address {
@@ -322,6 +328,15 @@ class AdressUserFragment : Fragment() {
             binding.scrollEndereco,
             "Endereço salvo",
         )
+
+        val tess = activity as MainActivity
+        tess.mostrarBottom();
     }
 
+    private fun controlarProgessBar(mostrar: Boolean) {
+        if (mostrar)
+            binding.progressBarCadastroEndereco.visibility = View.VISIBLE;
+        else
+            binding.progressBarCadastroEndereco.visibility = View.GONE;
+    }
 }

@@ -1,22 +1,19 @@
 package com.example.adegacaze.view
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.adegacaze.SearchBarFragment
+import com.example.adegacaze.*
 import com.example.adegacaze.databinding.FragmentOrderDetailsBinding
 import com.example.adegacaze.databinding.FragmentOrderProductBinding
-import com.example.adegacaze.formatDate
-import com.example.adegacaze.formatarDouble
+import com.example.adegacaze.model.AddCart
+import com.example.adegacaze.model.AddCartResp
 import com.example.adegacaze.model.Order
 import com.example.adegacaze.model.ProductsItem
 import com.example.adegacaze.service.API
-import com.example.adegacaze.showSnack
-import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -76,7 +73,7 @@ class OrderDetailsFragment : Fragment() {
 
                         showSnack(
                             binding.containerDetalhePedido,
-                            "Não foi possível carregar o endereço selecionado",
+                            "Não foi possível carregar o produto selecionado",
                         )
 
                         Log.e("Erro", error);
@@ -117,7 +114,7 @@ class OrderDetailsFragment : Fragment() {
 
             binding.textDataPedido.text =
                 formatDate(
-                    pedido.created_at,  "yyyy-mm-dd","dd/mm/yyyy"
+                    pedido.created_at, "yyyy-mm-dd", "dd/mm/yyyy"
                 )
 
             var total = 0.0;
@@ -131,14 +128,81 @@ class OrderDetailsFragment : Fragment() {
                 produtoPedidoBinding.textPrecoProduto.text = formatarDouble(it.pivot.price);
 
                 produtoPedidoBinding.textQuantidadeProduto.text = it.pivot.quantity.toString();
-                produtoPedidoBinding.textPrecoTotal.text = formatarDouble(it.pivot.quantity * it.pivot.price)
+                produtoPedidoBinding.textPrecoTotal.text =
+                    formatarDouble(it.pivot.quantity * it.pivot.price)
                 total += it.pivot.quantity * it.pivot.price;
                 binding.frameItensPedido.addView(produtoPedidoBinding.root)
 
             }
+
+            if (pedido.observation == null) {
+                binding.linearlObservacoes.visibility = View.GONE;
+            } else
+                binding.textObservacoes.text = pedido.observation;
+
+            binding.textoTipoPagamento.text = pedido.payment_type;
+            binding.textStatusProduto.text = pedido.status.name;
+            binding.textNomeEndereco.text = pedido.adress.name;
+            binding.textEndereco.text = pedido.adress.street;
+            binding.textNumeroCara.text = pedido.adress.number;
+            binding.textComplemento.text = pedido.adress.complete;
+            binding.textCidade.text = pedido.adress.cep;
+
+
             binding.textTotalPedido.text = formatarDouble(total)
+
+            comprarNovamente(pedido)
         }
     }
+
+    private fun comprarNovamente(pedido: Order) {
+        binding.buttonPedirNovamente.setOnClickListener {
+
+            pedido.products.forEach {
+                adicionarItemCarrinho(it.id, it.pivot.quantity);
+            }
+
+            val orderFrag = MakeOrderFragment.newInstance();
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, orderFrag)
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    private fun adicionarItemCarrinho(produtoId: Int, quantidade: Int) {
+
+        val callback = object : Callback<AddCartResp> {
+            override fun onResponse(call: Call<AddCartResp>, response: Response<AddCartResp>) {
+                if (response.isSuccessful) {
+
+
+                } else {
+                    val error = response.errorBody().toString()
+                    showSnack(
+                        binding.linearlObservacoes,
+                        "Não foi possível adicionar o produto ao carrinho"
+                    )
+
+                    Log.e("Erro", error);
+                }
+            }
+
+            override fun onFailure(call: Call<AddCartResp>, t: Throwable) {
+                showSnack(
+                    binding.linearlObservacoes,
+                    "Não foi possível se conectar com o servidor"
+                )
+                Log.e("Erro", "Falha ao executar serviço", t);
+            }
+        }
+
+        val objetoAdicionar = AddCart(produtoId, quantidade);
+
+        API(requireContext()).cart.addCart(objetoAdicionar).enqueue(callback)
+
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -149,7 +213,6 @@ class OrderDetailsFragment : Fragment() {
             .addToBackStack(null)
             .commit()
     }
-
 
 
 }

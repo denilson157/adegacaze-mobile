@@ -123,6 +123,7 @@ class CartFragment : Fragment() {
             .commit()
     }
 
+
     companion object {
         fun newInstance() = CartFragment()
     }
